@@ -9,7 +9,6 @@
 #  - Настроить volume для хранения данных БД.
 #  -
 
-version: '3'
 services:
   postgres:
     image: postgres:latest
@@ -23,6 +22,19 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  app:
+    build: .
+    container_name: springboot-app
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
 
 volumes:
   pgdata:

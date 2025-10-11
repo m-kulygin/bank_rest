@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_client_table
+      author: Max Kulygin
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
