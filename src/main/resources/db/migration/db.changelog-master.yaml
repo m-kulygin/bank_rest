@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/changeset/v1_initial_table.yaml
+  - include:
+      file: db/migration/changeset/v2_initial_insert.yaml
