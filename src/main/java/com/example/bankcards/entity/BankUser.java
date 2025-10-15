@@ -1,5 +1,6 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.entity.enums.BankUserRole;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +22,10 @@ public class BankUser {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private BankUserRole role;
 
     public Long getId() {
         return id;
@@ -60,5 +65,13 @@ public class BankUser {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public BankUserRole getRole() {
+        return role;
+    }
+
+    public void setRole(BankUserRole role) {
+        this.role = role;
     }
 }
