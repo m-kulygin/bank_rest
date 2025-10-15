@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.entity.Client;
-import com.example.bankcards.repository.ClientRepository;
+import com.example.bankcards.entity.BankCard;
+import com.example.bankcards.repository.BankCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class ClientController {
+public class BankCardController {
 
-    private final ClientRepository repository;
+    private final BankCardRepository repository;
 
     @Autowired
-    public ClientController(ClientRepository repository) {
+    public BankCardController(BankCardRepository repository) {
         this.repository = repository;
     }
 
-    @GetMapping("/clients")
-    public List<Client> findAllClients() {
+    @GetMapping("/bank_cards")
+    public List<BankCard> findAllBankCards() {
         return repository.findAll();
     }
 }
