@@ -22,7 +22,7 @@ public class BankCardController {
     }
 
     @GetMapping("/bank_cards")
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasAuthority('CLIENT')")
     public List<BankCardDto> findAllBankCards() {
         return bankCardService.getAll();
     }
