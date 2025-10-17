@@ -2,17 +2,28 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankUserRole;
+import com.example.bankcards.exception.BankUserNotFoundException;
 import com.example.bankcards.repository.BankUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BankUserService {
     private final BankUserRepository repository;
+
+
+
+    @Transactional(readOnly = true)
+    public BankUser getUserOrThrow(Long userId) {
+        return repository.findById(userId)
+                .orElseThrow(() -> BankUserNotFoundException.byId(userId));
+    }
+
 
     /**
      * Сохранение пользователя
