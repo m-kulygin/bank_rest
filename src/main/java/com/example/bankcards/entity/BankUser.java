@@ -2,17 +2,31 @@ package com.example.bankcards.entity;
 
 import com.example.bankcards.entity.enums.BankUserRole;
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bank_user")
-public class BankUser {
+public class BankUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
     @Column(name = "login", nullable = false, unique = true)
-    private String login;
+    private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -24,54 +38,54 @@ public class BankUser {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class) // https://www.baeldung.com/java-enums-jpa-postgresql
     @Column(name = "role", nullable = false)
     private BankUserRole role;
 
-    public Long getId() {
-        return id;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public String getFirstName() {
-        return firstName;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public String getLastName() {
-        return lastName;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
-    public BankUserRole getRole() {
-        return role;
-    }
-
-    public void setRole(BankUserRole role) {
-        this.role = role;
+    @Override
+    public String toString() {
+        return "BankUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

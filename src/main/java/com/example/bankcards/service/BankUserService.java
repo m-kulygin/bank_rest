@@ -1,32 +1,86 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
-import com.example.bankcards.repository.BankCardRepository;
+import com.example.bankcards.entity.enums.BankUserRole;
 import com.example.bankcards.repository.BankUserRepository;
-import com.example.bankcards.util.DtoConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BankUserService {
-    private final BankUserRepository bankUserRepository;
+    private final BankUserRepository repository;
 
-    @Autowired
-    public BankUserService(BankUserRepository bankUserRepository) {
-        this.bankUserRepository = bankUserRepository;
+    /**
+     * Сохранение пользователя
+     *
+     * @return сохраненный пользователь
+     */
+    public BankUser save(BankUser user) {
+        return repository.save(user);
     }
 
-    @Transactional(readOnly = true)
-    public List<BankUserDto> getAll() {
-        List<BankUser> cards = bankUserRepository.findAll();
-        return cards.stream()
-                .map(DtoConverter::convertBankUserToDto)
-                .toList();
+
+    /**
+     * Создание пользователя
+     *
+     * @return созданный пользователь
+     */
+    public BankUser create(BankUser user) {
+        if (repository.existsByUsername(user.getUsername())) {
+            // Заменить на свои исключения
+            throw new RuntimeException("Пользователь с таким именем уже существует");
+        }
+
+        return save(user);
+    }
+
+    /**
+     * Получение пользователя по имени пользователя
+     *
+     * @return пользователь
+     */
+    public BankUser getByUsername(String username) {
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+
+    }
+
+    /**
+     * Получение пользователя по имени пользователя
+     * <p>
+     * Нужен для Spring Security
+     *
+     * @return пользователь
+     */
+    public UserDetailsService userDetailsService() {
+        return this::getByUsername;
+    }
+
+    /**
+     * Получение текущего пользователя
+     *
+     * @return текущий пользователь
+     */
+    public BankUser getCurrentUser() {
+        // Получение имени пользователя из контекста Spring Security
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUsername(username);
+    }
+
+
+    /**
+     * Выдача прав администратора текущему пользователю
+     * <p>
+     * Нужен для демонстрации
+     */
+    @Deprecated
+    public void getAdmin() {
+        var user = getCurrentUser();
+        user.setRole(BankUserRole.ADMIN);
+        save(user);
     }
 }
