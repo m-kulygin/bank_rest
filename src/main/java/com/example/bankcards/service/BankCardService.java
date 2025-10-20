@@ -83,7 +83,7 @@ public class BankCardService {
 
         BankCard card = new BankCard(gen.toString(),
                 user,
-                OffsetDateTime.now(),
+                OffsetDateTime.now().plusMonths(12),
                 BankCardStatus.ACTIVE,
                 new BigDecimal(1000));
         return DtoConverter.convertBankCardToDto(bankCardRepository.save(card));
@@ -106,7 +106,7 @@ public class BankCardService {
     @Transactional
     public void activateCard(Long cardId) {
         BankCard card = checkPresenceAndReturn(cardId);
-        card.setStatus(BankCardStatus.ACTIVE); // Меняем заблокированное состояние на активное
+        card.setStatus(BankCardStatus.ACTIVE);
         bankCardRepository.save(card);
     } // ADMIN
 
@@ -155,28 +155,22 @@ public class BankCardService {
     }
 
     public Page<BankCardForUserDto> getUserCards(Pageable pageable, BankCardSearchCriteria searchCriteria) {
-        // Определяем текущего пользователя
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserLogin = authentication.getName();
 
-        // Формируем спецификацию на основе критериев поиска
         Specification<BankCard> spec = createSpecification(currentUserLogin, searchCriteria);
 
-        // Запрашиваем карточки с учётом пагинации и фильтров
         Page<BankCard> cardsPage = bankCardRepository.findAll(spec, pageable);
 
-        // Преобразуем карточки в DTO
         return cardsPage.map(BankCardForUserDto::new);
     }
 
     private Specification<BankCard> createSpecification(String username, BankCardSearchCriteria criteria) {
         return (root, query, cb) -> {
 
-            // Базовое условие: выбираем только карты текущего пользователя
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.join("user").get("username"), username));
 
-            // Дополнительные фильтры по балансу
             if (criteria.balanceFrom() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("balance"), criteria.balanceFrom()));
             }
@@ -185,12 +179,10 @@ public class BankCardService {
                 predicates.add(cb.lessThanOrEqualTo(root.get("balance"), criteria.balanceTo()));
             }
 
-            // Фильтры по статусу карты
             if (criteria.statuses() != null && !criteria.statuses().isEmpty()) {
                 predicates.add(root.get("status").in(criteria.statuses()));
             }
 
-            // Фильтры по сроку действия карты
             if (criteria.expirationDateStart() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("expirationDate"), criteria.expirationDateStart()));
             }
@@ -199,7 +191,6 @@ public class BankCardService {
                 predicates.add(cb.lessThanOrEqualTo(root.get("expirationDate"), criteria.expirationDateEnd()));
             }
 
-            // Объединяем все условия
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

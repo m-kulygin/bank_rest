@@ -68,7 +68,7 @@ public class BankCardController {
         return ResponseEntity.ok(bankCardService.getAllByUserId(userId));
     }
 
-    @PreAuthorize("hasAuthority('USER')") // Просматривает свои карты (пагинация)
+    @PreAuthorize("hasAuthority('USER')") // Просматривает свои карты (пагинация+поиск)
     @GetMapping("")
     public ResponseEntity<Page<BankCardForUserDto>> getUserCards(
             Pageable pageable,
@@ -99,7 +99,7 @@ public class BankCardController {
 //    Администратор:
 //
 //    +Создаёт, блокирует, активирует, удаляет карты
-//    Управляет пользователями
+//    +Управляет пользователями
 //    +Видит все карты
 //
 //    Пользователь:
