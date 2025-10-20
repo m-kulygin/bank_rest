@@ -2,6 +2,7 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.BankCardDto;
 import com.example.bankcards.dto.BankCardForUserDto;
+import com.example.bankcards.dto.BankCardSearchCriteria;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
@@ -11,10 +12,11 @@ import com.example.bankcards.exception.transfer.TransferNegativeAmountException;
 import com.example.bankcards.exception.transfer.TransferNotEnoughException;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.util.DtoConverter;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class BankCardService {
@@ -146,10 +146,53 @@ public class BankCardService {
         bankCardRepository.save(targetCard);
     }
 
-    public Page<BankCardForUserDto> getUserCards(Pageable pageable) {
+    public Page<BankCardForUserDto> getUserCards(Pageable pageable, BankCardSearchCriteria searchCriteria) {
+        // Определяем текущего пользователя
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserLogin = authentication.getName();
-        Page<BankCard> cardsPage = bankCardRepository.findByUserUsername(currentUserLogin, pageable);
+
+        // Формируем спецификацию на основе критериев поиска
+        Specification<BankCard> spec = createSpecification(currentUserLogin, searchCriteria);
+
+        // Запрашиваем карточки с учётом пагинации и фильтров
+        Page<BankCard> cardsPage = bankCardRepository.findAll(spec, pageable);
+
+        // Преобразуем карточки в DTO
         return cardsPage.map(BankCardForUserDto::new);
+    }
+
+    private Specification<BankCard> createSpecification(String username, BankCardSearchCriteria criteria) {
+        return (root, query, cb) -> {
+
+            // Базовое условие: выбираем только карты текущего пользователя
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.join("user").get("username"), username));
+
+            // Дополнительные фильтры по балансу
+            if (criteria.balanceFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("balance"), criteria.balanceFrom()));
+            }
+
+            if (criteria.balanceTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("balance"), criteria.balanceTo()));
+            }
+
+            // Фильтры по статусу карты
+            if (criteria.statuses() != null && !criteria.statuses().isEmpty()) {
+                predicates.add(root.get("status").in(criteria.statuses()));
+            }
+
+            // Фильтры по сроку действия карты
+            if (criteria.expirationDateStart() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("expirationDate"), criteria.expirationDateStart()));
+            }
+
+            if (criteria.expirationDateEnd() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("expirationDate"), criteria.expirationDateEnd()));
+            }
+
+            // Объединяем все условия
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }

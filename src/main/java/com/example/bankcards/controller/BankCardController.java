@@ -2,8 +2,10 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.BankCardDto;
 import com.example.bankcards.dto.BankCardForUserDto;
+import com.example.bankcards.dto.BankCardSearchCriteria;
 import com.example.bankcards.service.BankCardService;
 import com.example.bankcards.util.DtoConverter;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -64,8 +66,10 @@ public class BankCardController {
 
     @PreAuthorize("hasAuthority('USER')") // Просматривает свои карты (пагинация)
     @GetMapping("")
-    public ResponseEntity<Page<BankCardForUserDto>> getUserCards(Pageable pageable) {
-        return ResponseEntity.ok(bankCardService.getUserCards(pageable));
+    public ResponseEntity<Page<BankCardForUserDto>> getUserCards(
+            Pageable pageable,
+            BankCardSearchCriteria searchCriteria) {
+        return ResponseEntity.ok(bankCardService.getUserCards(pageable, searchCriteria));
     }
 
     @PreAuthorize("hasAuthority('USER')") // Запрашивает блокировку карты
@@ -96,7 +100,7 @@ public class BankCardController {
 //
 //    Пользователь:
 //
-//    -+Просматривает свои карты (-поиск и +пагинация)
+//    +Просматривает свои карты (+поиск и +пагинация)
 //    +Запрашивает блокировку карты
 //    +Делает переводы между своими картами
 //    Смотрит баланс
