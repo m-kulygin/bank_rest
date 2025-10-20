@@ -10,5 +10,6 @@ public record BankCardDto (Long cardId,
                            BankUserDto user,
                            OffsetDateTime expirationDate,
                            BankCardStatus status,
-                           BigDecimal balance) {
+                           BigDecimal balance,
+                           Boolean blockRequested) {
 }

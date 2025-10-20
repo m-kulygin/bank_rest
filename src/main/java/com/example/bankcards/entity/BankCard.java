@@ -39,6 +39,9 @@ public class BankCard {
     @Column(name = "balance", precision = 12, scale = 2, nullable = false)
     private BigDecimal balance;
 
+    @Column(name = "block_requested")
+    private Boolean blockRequested;
+
     public BankCard(String number,
                     BankUser user,
                     OffsetDateTime expirationDate,

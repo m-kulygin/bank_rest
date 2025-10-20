@@ -12,7 +12,8 @@ public class DtoConverter {
                 convertBankUserToDto(bankCard.getUser()),
                 bankCard.getExpirationDate(),
                 bankCard.getStatus(),
-                bankCard.getBalance());
+                bankCard.getBalance(),
+                bankCard.getBlockRequested());
     }
 
     public static BankUserDto convertBankUserToDto(BankUser bankUser) {

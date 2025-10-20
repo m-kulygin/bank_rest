@@ -1,5 +1,5 @@
 CREATE TYPE bankcard_status AS ENUM ('ACTIVE','BLOCKED','EXPIRED');
-CREATE TYPE user_role AS ENUM ('ADMIN', 'CLIENT');
+CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
 
 CREATE TABLE bank_user
 (
@@ -20,5 +20,6 @@ CREATE TABLE bankcard
     expiration_date TIMESTAMP(6) WITH TIME ZONE NOT NULL,
     status          bankcard_status             NOT NULL,
     balance         NUMERIC(12, 2)              NOT NULL,
+    block_requested BOOLEAN DEFAULT false,
     PRIMARY KEY (card_id)
 );
