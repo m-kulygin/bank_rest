@@ -1,0 +1,5 @@
+DROP TYPE IF EXISTS bankcard_status;
+DROP TYPE IF EXISTS user_role;
+
+DROP TABLE IF EXISTS bank_user CASCADE;
+DROP TABLE IF EXISTS bankcard CASCADE;

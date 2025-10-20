@@ -1,25 +1,45 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.entity.BankUser;
-import com.example.bankcards.repository.BankUserRepository;
+import com.example.bankcards.dto.BankUserDto;
+import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.service.BankUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/bank_users")
 public class BankUserController {
 
-    private final BankUserRepository repository;
+    private final BankUserService bankUserService;
 
     @Autowired
-    public BankUserController(BankUserRepository repository) {
-        this.repository = repository;
+    public BankUserController(BankUserService bankUserService) {
+        this.bankUserService = bankUserService;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')") // Смотрит всех юзеров
     @GetMapping("/bank_users")
-    public List<BankUser> findAllBankUsers() {
-        return repository.findAll();
+    public ResponseEntity<List<BankUserDto>> findAllBankUsers() {
+        return ResponseEntity.ok(bankUserService.getAll());
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')") // Удаляет
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        bankUserService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")  // Обновляет
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody BankUserUpdateDto userUpdateDto) {
+        bankUserService.update(userId, userUpdateDto);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

@@ -1,8 +1,8 @@
-INSERT INTO bank_user(login, password, first_name, last_name)
+INSERT INTO bank_user(login, password, first_name, last_name, role)
 VALUES
-    ('user1', '$2a$10$b5yQ0CswuUdqoYwykq.XNO/GvBBUI2.Uw7dLWhdBNbsOExmlNhXAO', 'Иван', 'Иванов'),
-    ('user2', '$2a$10$cYI1A46t6EWtWiBzUEEBae2fCGIZRUkRh.kotHcGPbVkyalOVON.', 'Анна', 'Петрова'),
-    ('user3', '$2a$10$fGbdpP3ewLukIPgFQR9NNuLtFa1/hBuMGcW/vNoiZOCeUKoSnIUR6', 'Алексей', 'Смирнов');
+    ('user1', '$2a$10$b5yQ0CswuUdqoYwykq.XNO/GvBBUI2.Uw7dLWhdBNbsOExmlNhXAO', 'Иван', 'Иванов', 'ADMIN'),
+    ('user2', '$2a$10$cYI1A46t6EWtWiBzUEEBae2fCGIZRUkRh.kotHcGPbVkyalOVON.', 'Анна', 'Петрова', 'USER'),
+    ('user3', '$2a$10$fGbdpP3ewLukIPgFQR9NNuLtFa1/hBuMGcW/vNoiZOCeUKoSnIUR6', 'Алексей', 'Смирнов', 'USER');
 
 INSERT INTO bankcard(number, user_id, expiration_date, status, balance)
 VALUES
