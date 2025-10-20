@@ -22,7 +22,7 @@ public class BankUserController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')") // Смотрит всех юзеров
-    @GetMapping("/bank_users")
+    @GetMapping("/all")
     public ResponseEntity<List<BankUserDto>> findAllBankUsers() {
         return ResponseEntity.ok(bankUserService.getAll());
     }
