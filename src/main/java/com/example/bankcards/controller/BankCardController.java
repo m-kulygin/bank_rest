@@ -4,8 +4,6 @@ import com.example.bankcards.dto.BankCardDto;
 import com.example.bankcards.dto.BankCardForUserDto;
 import com.example.bankcards.dto.BankCardSearchCriteria;
 import com.example.bankcards.service.BankCardService;
-import com.example.bankcards.util.DtoConverter;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,6 +60,12 @@ public class BankCardController {
     @GetMapping("/all")
     public ResponseEntity<List<BankCardDto>> getAllCards() {
         return ResponseEntity.ok(bankCardService.getAll());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')") // Видит все карты пользователя
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<BankCardDto>> getAllUserCards(@PathVariable Long userId) {
+        return ResponseEntity.ok(bankCardService.getAllByUserId(userId));
     }
 
     @PreAuthorize("hasAuthority('USER')") // Просматривает свои карты (пагинация)

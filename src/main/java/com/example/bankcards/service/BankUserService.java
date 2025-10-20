@@ -1,97 +1,72 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.BankUserDto;
+import com.example.bankcards.dto.BankUserUpdateDto;
 import com.example.bankcards.entity.BankUser;
-import com.example.bankcards.entity.enums.BankUserRole;
+import com.example.bankcards.exception.BankUserLoginAlreadyExistsException;
 import com.example.bankcards.exception.BankUserNotFoundException;
 import com.example.bankcards.repository.BankUserRepository;
+import com.example.bankcards.util.DtoConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BankUserService {
-    private final BankUserRepository repository;
+    private final BankUserRepository bankUserRepository;
 
-
+    public BankUser checkPresenceAndReturn(Long userId) {
+        Optional<BankUser> bankUser = bankUserRepository.findById(userId);
+        if (bankUser.isEmpty()) {
+            throw BankUserNotFoundException.byId(userId);
+        }
+        return bankUser.get();
+    }
 
     @Transactional(readOnly = true)
-    public BankUser getUserOrThrow(Long userId) {
-        return repository.findById(userId)
-                .orElseThrow(() -> BankUserNotFoundException.byId(userId));
+    public List<BankUserDto> getAll() { // получить всех юзером
+        List<BankUser> users = bankUserRepository.findAll();
+        return users.stream()
+                .map(DtoConverter::convertBankUserToDto)
+                .toList();
     }
 
-
-    /**
-     * Сохранение пользователя
-     *
-     * @return сохраненный пользователь
-     */
-    public BankUser save(BankUser user) {
-        return repository.save(user);
+    @Transactional // удалить по ИД
+    public void deleteUser(Long userId) {
+        BankUser user = checkPresenceAndReturn(userId);
+        bankUserRepository.delete(user);
     }
 
-
-    /**
-     * Создание пользователя
-     *
-     * @return созданный пользователь
-     */
+    @Transactional
     public BankUser create(BankUser user) {
-        if (repository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
+        if (bankUserRepository.existsByUsername(user.getUsername())) {
+            throw BankUserLoginAlreadyExistsException.byLogin(user.getUsername());
         }
-
-        return save(user);
+        return bankUserRepository.save(user);
     }
 
-    /**
-     * Получение пользователя по имени пользователя
-     *
-     * @return пользователь
-     */
+    @Transactional
+    public BankUser update(Long userId, BankUserUpdateDto updateDto) {
+        BankUser user = checkPresenceAndReturn(userId);
+        user.setFirstName(updateDto.firstName());
+        user.setLastName(updateDto.lastName());
+        user.setRole(updateDto.role());
+        return bankUserRepository.save(user);
+    }
+
     public BankUser getByUsername(String username) {
-        return repository.findByUsername(username)
+        return bankUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
     }
 
-    /**
-     * Получение пользователя по имени пользователя
-     * <p>
-     * Нужен для Spring Security
-     *
-     * @return пользователь
-     */
     public UserDetailsService userDetailsService() {
         return this::getByUsername;
-    }
-
-    /**
-     * Получение текущего пользователя
-     *
-     * @return текущий пользователь
-     */
-    public BankUser getCurrentUser() {
-        // Получение имени пользователя из контекста Spring Security
-        var username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return getByUsername(username);
-    }
-
-
-    /**
-     * Выдача прав администратора текущему пользователю
-     * <p>
-     * Нужен для демонстрации
-     */
-    @Deprecated
-    public void getAdmin() {
-        var user = getCurrentUser();
-        user.setRole(BankUserRole.ADMIN);
-        save(user);
     }
 }

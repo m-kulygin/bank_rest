@@ -62,11 +62,19 @@ public class BankCardService {
         return cards.stream()
                 .map(DtoConverter::convertBankCardToDto)
                 .toList();
-    } // ADMIN
+    }
+
+    @Transactional(readOnly = true)
+    public List<BankCardDto> getAllByUserId(Long userId) {
+        List<BankCard> cards = bankCardRepository.findByUser_Id(userId);
+        return cards.stream()
+                .map(DtoConverter::convertBankCardToDto)
+                .toList();
+    }
 
     @Transactional
     public BankCardDto createCardByUserId(Long userId) {
-        BankUser user = bankUserService.getUserOrThrow(userId);
+        BankUser user = bankUserService.checkPresenceAndReturn(userId);
 
         StringBuilder gen = new StringBuilder();
         for (int i = 0; i < 16; i++) {
