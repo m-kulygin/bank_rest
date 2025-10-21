@@ -6,7 +6,7 @@
 
 Требуемые технологии в соответствии с условиями задания: Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
 
-Полные условия задания: https://gitlab.com/PaatoM/bank_rest/-/blob/6224547ce919f0e28fe7c76871d27aa6c74fad0f/README.md
+Полные условия задания: [https://gitlab.com/PaatoM/bank_rest/-/blob/6224547ce919f0e28fe7c76871d27aa6c74fad0f/README.md](https://github.com/m-kulygin/bank_rest/blob/f3e4f4a45a0b1e50210ed77207279099a7b0270d/README-origin.md)
 
 ## Технологии
 - Язык программирования: Java 17 (Microsoft OpenJDK 17.0.16)
