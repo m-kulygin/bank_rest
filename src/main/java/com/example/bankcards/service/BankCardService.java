@@ -1,15 +1,15 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
+import com.example.bankcards.dto.response.BankCardForUserDto;
+import com.example.bankcards.dto.request.BankCardSearchCriteria;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
-import com.example.bankcards.exception.BankCardNotFoundException;
-import com.example.bankcards.exception.transfer.TransferDiffOwnersException;
-import com.example.bankcards.exception.transfer.TransferNegativeAmountException;
-import com.example.bankcards.exception.transfer.TransferNotEnoughException;
+import com.example.bankcards.exception.general.BankCardNotFoundException;
+import com.example.bankcards.exception.money_transfer.TransferDiffOwnersException;
+import com.example.bankcards.exception.money_transfer.TransferNegativeAmountException;
+import com.example.bankcards.exception.money_transfer.TransferNotEnoughException;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.util.DtoConverter;
 import jakarta.persistence.criteria.Predicate;

@@ -1,34 +1,24 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
 import com.example.bankcards.entity.enums.BankUserRole;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.util.DtoConverter;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
-import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;

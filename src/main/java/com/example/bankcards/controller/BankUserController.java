@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.dto.response.BankUserDto;
+import com.example.bankcards.dto.request.BankUserUpdateDto;
 import com.example.bankcards.service.BankUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,8 +1,8 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
+import com.example.bankcards.dto.response.BankCardForUserDto;
+import com.example.bankcards.dto.request.BankCardSearchCriteria;
 import com.example.bankcards.service.BankCardService;
 import com.example.bankcards.util.validation.CustomPageable;
 import io.swagger.v3.oas.annotations.Operation;
