@@ -4,12 +4,18 @@ import com.example.bankcards.exception.transfer.TransferDiffOwnersException;
 import com.example.bankcards.exception.transfer.TransferException;
 import com.example.bankcards.exception.transfer.TransferNegativeAmountException;
 import com.example.bankcards.exception.transfer.TransferNotEnoughException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
@@ -19,6 +25,28 @@ public class CustomExceptionHandler {
     @ResponseBody
     public ApiError handleGenericException(Exception e) {
         return new ApiError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public List<ApiError> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<ApiError> errors = new ArrayList<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            errors.add(new ApiError(violation.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+        return errors;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public List<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<ApiError> errors = new ArrayList<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.add(new ApiError(error.getDefaultMessage(), HttpStatus.BAD_REQUEST.value()));
+        });
+        return errors;
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -83,5 +111,6 @@ public class CustomExceptionHandler {
     public ApiError handleBankUserNotFoundException(BankUserNotFoundException e) {
         return new ApiError(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
+
 
 }
