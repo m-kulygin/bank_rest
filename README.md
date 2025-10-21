@@ -31,6 +31,7 @@
 4. Запустить сборку через Maven (`mvn package`). Дождаться выполнения. Автотесты прогоняются на этом этапе.
 5. Собрать контейнеры командой `docker compose up --build`.
 6. В браузере перейти по адресу http://localhost:8080/swagger-ui/index.html . Должна открыться интерактивная swagger-страница с возможностью дёргать эндпоинты сервиса.  
+   **OpenAPI-спецификация будет находиться по адресу http://localhost:8080/v3/api-docs**
    <img width="700" alt="image" src="https://github.com/user-attachments/assets/2eeaff7b-b074-4b52-a5e2-c4f6d213aa3e" />
 7. Для дальнейшего использования бизнес-ручек необходимо авторизоваться, используя эндпоинт `/auth/sign-in` у контроллера авторизации, нажав "Try it out" у соответствующей ручки и указав логин и пароль в request body.  
    <img width="700" alt="image" src="https://github.com/user-attachments/assets/f77c5b84-b20e-400f-8231-e57567275401" />  
