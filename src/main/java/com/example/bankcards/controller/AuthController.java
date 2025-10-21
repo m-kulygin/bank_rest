@@ -1,9 +1,9 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.security.JwtAuthenticationResponse;
-import com.example.bankcards.dto.security.SignInRequest;
-import com.example.bankcards.dto.security.SignUpRequest;
-import com.example.bankcards.service.security.AuthenticationService;
+import com.example.bankcards.dto.response.JwtAuthenticationResponse;
+import com.example.bankcards.dto.request.SignInRequest;
+import com.example.bankcards.dto.request.SignUpRequest;
+import com.example.bankcards.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

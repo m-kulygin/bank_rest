@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.dto.response.BankUserDto;
+import com.example.bankcards.dto.request.BankUserUpdateDto;
 import com.example.bankcards.entity.enums.BankUserRole;
 import com.example.bankcards.service.BankUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

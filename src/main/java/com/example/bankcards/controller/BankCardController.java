@@ -1,8 +1,8 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
+import com.example.bankcards.dto.response.BankCardForUserDto;
+import com.example.bankcards.dto.request.BankCardSearchCriteria;
 import com.example.bankcards.service.BankCardService;
 import com.example.bankcards.util.validation.CustomPageable;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +40,7 @@ public class BankCardController {
                       Карта создаётся со случайным номером, сроком действия 12 месяцев, статусом ACTIVE и балансом 1000.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Создаёт
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/users/{userId}")
     public ResponseEntity<BankCardDto> createCardByUserId(
             @PathVariable
@@ -59,7 +58,7 @@ public class BankCardController {
                       Устанавливает поле blockRequested у карты на false (если запрос на блокировку поступал от владельца карты).
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Блокирует
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{cardId}/block")
     public ResponseEntity<Void> blockCard(
             @PathVariable
@@ -75,7 +74,7 @@ public class BankCardController {
                       Устанавливает статус ACTIVE у карты по заданному cardId.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Активирует
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{cardId}/activate")
     public ResponseEntity<Void> activateCard(
             @PathVariable
@@ -91,7 +90,7 @@ public class BankCardController {
                       Удаляет карту по cardId.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Удаляет
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{cardId}")
     public ResponseEntity<Void> deleteCard(
             @PathVariable
@@ -107,7 +106,7 @@ public class BankCardController {
                       Возвращает список карт всех пользователей.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Видит все карты
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<BankCardDto>> getAllCards() {
         return ResponseEntity.ok(bankCardService.getAll());
@@ -118,7 +117,7 @@ public class BankCardController {
                       Возвращает список карт конкретного пользователя по его userId.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Видит все карты пользователя
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BankCardDto>> getAllUserCards(
             @PathVariable
@@ -135,7 +134,7 @@ public class BankCardController {
                       Доступна пагинация.
                       Доступ: USER
                     """)
-    @PreAuthorize("hasAuthority('USER')") // Просматривает свои карты (пагинация+поиск)
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("")
     public ResponseEntity<Page<BankCardForUserDto>> getUserCards(
             CustomPageable customPageable,
@@ -149,7 +148,7 @@ public class BankCardController {
                       Устанавливает поле blockRequested у карты текущего пользователя на true.
                       Доступ: USER
                     """)
-    @PreAuthorize("hasAuthority('USER')") // Запрашивает блокировку карты
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/{cardId}/block-request")
     public ResponseEntity<Void> sendBlockRequest(
             @PathVariable
@@ -165,7 +164,7 @@ public class BankCardController {
                       Переводит указанную сумму с одной карты текущего пользователя на другую.
                       Доступ: USER
                     """)
-    @PreAuthorize("hasAuthority('USER')") // Делает переводы между своими картами
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/{sourceCardId}/transfer/{targetCardId}")
     public ResponseEntity<Void> makeTransferBetweenOwnCards(
             @PathVariable
@@ -184,19 +183,4 @@ public class BankCardController {
         bankCardService.makeTransfer(sourceCardId, targetCardId, amount);
         return ResponseEntity.ok().build();
     }
-
-
-//    ✅ Возможности
-//    Администратор:
-//
-//    +Создаёт, блокирует, активирует, удаляет карты
-//    +Управляет пользователями
-//    +Видит все карты
-//
-//    Пользователь:
-//
-//    +Просматривает свои карты (+поиск и +пагинация)
-//    +Запрашивает блокировку карты
-//    +Делает переводы между своими картами
-//    Смотрит баланс
 }

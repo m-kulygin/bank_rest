@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.dto.response.BankUserDto;
+import com.example.bankcards.dto.request.BankUserUpdateDto;
 import com.example.bankcards.service.BankUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +34,7 @@ public class BankUserController {
                       Возвращает информацию о всех пользователях системы.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Смотрит всех юзеров
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<BankUserDto>> findAllBankUsers() {
         return ResponseEntity.ok(bankUserService.getAll());
@@ -45,7 +45,7 @@ public class BankUserController {
                       Удаляет пользователя с заданным id.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')") // Удаляет
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable
@@ -61,7 +61,7 @@ public class BankUserController {
                       Обновляет информацию пользователя: можно обновить имя, фамилию и роль в системе.
                       Доступ: ADMIN
                     """)
-    @PreAuthorize("hasAuthority('ADMIN')")  // Обновляет
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{userId}")
     public ResponseEntity<Void> updateUser(
             @PathVariable
@@ -74,6 +74,4 @@ public class BankUserController {
         bankUserService.update(userId, userUpdateDto);
         return ResponseEntity.ok().build();
     }
-
-
 }

@@ -1,9 +1,10 @@
 package com.example.bankcards.exception;
 
-import com.example.bankcards.exception.transfer.TransferDiffOwnersException;
-import com.example.bankcards.exception.transfer.TransferException;
-import com.example.bankcards.exception.transfer.TransferNegativeAmountException;
-import com.example.bankcards.exception.transfer.TransferNotEnoughException;
+import com.example.bankcards.dto.response.ApiError;
+import com.example.bankcards.exception.general.BankCardNotActiveException;
+import com.example.bankcards.exception.general.BankCardNotFoundException;
+import com.example.bankcards.exception.general.BankUserNotFoundException;
+import com.example.bankcards.exception.money_transfer.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -111,6 +112,4 @@ public class CustomExceptionHandler {
     public ApiError handleBankUserNotFoundException(BankUserNotFoundException e) {
         return new ApiError(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
-
-
 }

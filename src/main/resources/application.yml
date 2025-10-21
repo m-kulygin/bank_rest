@@ -1,16 +1,7 @@
-#
-# application.yml — главный конфигурационный файл Spring Boot.
-
-#Что нужно сделать:
-#  - Указать настройки подключения к базе данных.
-#  - Указать порт приложения.
-#  - Настроить параметры безопасности и JWT.
-#  - Включить Swagger UI.
-
 spring:
   liquibase:
-    enabled: true          # Активация Liquibase
-    change-log: classpath:/db/migration/db.changelog-master.yaml  # Основной файл ченджлогов
+    enabled: true
+    change-log: classpath:/db/migration/db.changelog-master.yaml
   datasource:
     url: jdbc:postgresql://postgres:5432/mydatabase
     username: user

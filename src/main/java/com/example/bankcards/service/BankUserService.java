@@ -1,10 +1,12 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.dto.response.BankUserDto;
+import com.example.bankcards.dto.request.BankUserUpdateDto;
+import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
-import com.example.bankcards.exception.BankUserLoginAlreadyExistsException;
-import com.example.bankcards.exception.BankUserNotFoundException;
+import com.example.bankcards.exception.general.BankUserLoginAlreadyExistsException;
+import com.example.bankcards.exception.general.BankUserNotFoundException;
+import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.repository.BankUserRepository;
 import com.example.bankcards.util.DtoConverter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BankUserService {
     private final BankUserRepository bankUserRepository;
+    private final BankCardRepository bankCardRepository;
 
     public BankUser checkPresenceAndReturn(Long userId) {
         Optional<BankUser> bankUser = bankUserRepository.findById(userId);
@@ -30,16 +33,18 @@ public class BankUserService {
     }
 
     @Transactional(readOnly = true)
-    public List<BankUserDto> getAll() { // получить всех юзером
+    public List<BankUserDto> getAll() {
         List<BankUser> users = bankUserRepository.findAll();
         return users.stream()
                 .map(DtoConverter::convertBankUserToDto)
                 .toList();
     }
 
-    @Transactional // удалить по ИД
+    @Transactional
     public void deleteUser(Long userId) {
         BankUser user = checkPresenceAndReturn(userId);
+        List<BankCard> cards = bankCardRepository.findByUser_Id(userId);
+        bankCardRepository.deleteAll(cards);
         bankUserRepository.delete(user);
     }
 

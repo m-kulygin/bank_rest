@@ -24,7 +24,7 @@ public class BankCard {
     @Column(name = "number", nullable = false, unique = true)
     private String number;
 
-    @ManyToOne(fetch = FetchType.EAGER) // !!!!!!!???????????
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private BankUser user;
 
@@ -53,5 +53,4 @@ public class BankCard {
         this.status = status;
         this.balance = balance;
     }
-
 }

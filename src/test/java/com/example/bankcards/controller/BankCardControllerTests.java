@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankUserDto;
+import com.example.bankcards.dto.response.BankCardDto;
+import com.example.bankcards.dto.response.BankUserDto;
 import com.example.bankcards.entity.enums.BankCardStatus;
 import com.example.bankcards.entity.enums.BankUserRole;
 import com.example.bankcards.service.BankCardService;

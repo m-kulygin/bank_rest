@@ -1,11 +1,12 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankUserDto;
-import com.example.bankcards.dto.BankUserUpdateDto;
+import com.example.bankcards.dto.response.BankUserDto;
+import com.example.bankcards.dto.request.BankUserUpdateDto;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankUserRole;
-import com.example.bankcards.exception.BankUserLoginAlreadyExistsException;
-import com.example.bankcards.exception.BankUserNotFoundException;
+import com.example.bankcards.exception.general.BankUserLoginAlreadyExistsException;
+import com.example.bankcards.exception.general.BankUserNotFoundException;
+import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.repository.BankUserRepository;
 import com.example.bankcards.util.DtoConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,9 @@ public class BankUserServiceTests {
 
     @Mock
     private BankUserRepository repository;
+
+    @Mock
+    private BankCardRepository cardRepository;
 
     @BeforeEach
     public void setup() {

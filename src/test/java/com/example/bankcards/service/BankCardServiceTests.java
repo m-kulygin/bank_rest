@@ -1,34 +1,24 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
 import com.example.bankcards.entity.enums.BankUserRole;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.util.DtoConverter;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
-import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class BankCardServiceTests {
 
     @InjectMocks
-    private BankCardService service;
+    private BankCardService bankCardService;
 
     @Mock
     private BankCardRepository repository;
@@ -59,7 +49,7 @@ public class BankCardServiceTests {
 
         when(repository.findAll()).thenReturn(Arrays.asList(card1, card2));
 
-        List<BankCardDto> result = service.getAll();
+        List<BankCardDto> result = bankCardService.getAll();
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.get(0)).usingRecursiveComparison().isEqualTo(DtoConverter.convertBankCardToDto(card1));
@@ -74,7 +64,7 @@ public class BankCardServiceTests {
 
         when(repository.findByUser_Id(1L)).thenReturn(Arrays.asList(card1, card2));
 
-        List<BankCardDto> result = service.getAllByUserId(1L);
+        List<BankCardDto> result = bankCardService.getAllByUserId(1L);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.get(0)).usingRecursiveComparison().isEqualTo(DtoConverter.convertBankCardToDto(card1));
@@ -88,13 +78,13 @@ public class BankCardServiceTests {
 
         when(repository.save(any(BankCard.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        BankCardDto result = service.createCardByUserId(1L);
+        BankCardDto result = bankCardService.createCardByUserId(1L);
 
-        assertThat(result.number().length()).isEqualTo(16);
-        assertThat(result.user().id()).isEqualTo(1L);
-        assertThat(result.expirationDate()).isAfter(OffsetDateTime.now());
-        assertThat(result.status()).isEqualTo(BankCardStatus.ACTIVE);
-        assertThat(result.balance()).isEqualTo(BigDecimal.valueOf(1000));
+        assertThat(result.getNumber().length()).isEqualTo(19); // 16 digits + 3 whitespaces for mask
+        assertThat(result.getUser().id()).isEqualTo(1L);
+        assertThat(result.getExpirationDate()).isAfter(OffsetDateTime.now());
+        assertThat(result.getStatus()).isEqualTo(BankCardStatus.ACTIVE);
+        assertThat(result.getBalance()).isEqualTo(BigDecimal.valueOf(1000));
     }
 
     @Test
@@ -102,7 +92,7 @@ public class BankCardServiceTests {
         var card = new BankCard("1234-5678-9012-3456", new BankUser(), OffsetDateTime.now(), BankCardStatus.ACTIVE, BigDecimal.TEN);
         when(repository.findById(1L)).thenReturn(Optional.of(card));
 
-        service.deleteCard(1L);
+        bankCardService.deleteCard(1L);
 
         verify(repository).deleteById(1L);
     }
@@ -112,7 +102,7 @@ public class BankCardServiceTests {
         var card = new BankCard("1234-5678-9012-3456", new BankUser(), OffsetDateTime.now(), BankCardStatus.ACTIVE, BigDecimal.TEN);
         when(repository.findById(1L)).thenReturn(Optional.of(card));
 
-        service.blockCard(1L);
+        bankCardService.blockCard(1L);
 
         assertThat(card.getStatus()).isEqualTo(BankCardStatus.BLOCKED);
         assertThat(card.getBlockRequested()).isFalse();
@@ -123,7 +113,7 @@ public class BankCardServiceTests {
         var card = new BankCard("1234-5678-9012-3456", new BankUser(), OffsetDateTime.now(), BankCardStatus.BLOCKED, BigDecimal.TEN);
         when(repository.findById(1L)).thenReturn(Optional.of(card));
 
-        service.activateCard(1L);
+        bankCardService.activateCard(1L);
 
         assertThat(card.getStatus()).isEqualTo(BankCardStatus.ACTIVE);
     }
@@ -137,7 +127,7 @@ public class BankCardServiceTests {
         Authentication auth = new UsernamePasswordAuthenticationToken("test_user", "");
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        service.sendBlockRequest(1L);
+        bankCardService.sendBlockRequest(1L);
 
         assertThat(card.getBlockRequested()).isTrue();
     }
@@ -154,7 +144,7 @@ public class BankCardServiceTests {
         Authentication auth = new UsernamePasswordAuthenticationToken("test_user", "");
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        service.makeTransfer(1L, 2L, BigDecimal.valueOf(500));
+        bankCardService.makeTransfer(1L, 2L, BigDecimal.valueOf(500));
 
         assertThat(sourceCard.getBalance()).isEqualTo(BigDecimal.valueOf(500));
         assertThat(targetCard.getBalance()).isEqualTo(BigDecimal.valueOf(500));

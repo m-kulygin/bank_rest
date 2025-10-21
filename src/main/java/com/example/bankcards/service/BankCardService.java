@@ -1,15 +1,16 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.BankCardDto;
-import com.example.bankcards.dto.BankCardForUserDto;
-import com.example.bankcards.dto.BankCardSearchCriteria;
+import com.example.bankcards.dto.response.BankCardDto;
+import com.example.bankcards.dto.response.BankCardForUserDto;
+import com.example.bankcards.dto.request.BankCardSearchCriteria;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
-import com.example.bankcards.exception.BankCardNotFoundException;
-import com.example.bankcards.exception.transfer.TransferDiffOwnersException;
-import com.example.bankcards.exception.transfer.TransferNegativeAmountException;
-import com.example.bankcards.exception.transfer.TransferNotEnoughException;
+import com.example.bankcards.exception.general.BankCardNotActiveException;
+import com.example.bankcards.exception.general.BankCardNotFoundException;
+import com.example.bankcards.exception.money_transfer.TransferDiffOwnersException;
+import com.example.bankcards.exception.money_transfer.TransferNegativeAmountException;
+import com.example.bankcards.exception.money_transfer.TransferNotEnoughException;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.util.DtoConverter;
 import jakarta.persistence.criteria.Predicate;
@@ -25,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class BankCardService {
@@ -87,13 +91,13 @@ public class BankCardService {
                 BankCardStatus.ACTIVE,
                 new BigDecimal(1000));
         return DtoConverter.convertBankCardToDto(bankCardRepository.save(card));
-    } // ADMIN
+    }
 
     @Transactional
     public void deleteCard(Long cardId) {
         checkPresenceAndReturn(cardId);
         bankCardRepository.deleteById(cardId);
-    } // ADMIN
+    }
 
     @Transactional
     public void blockCard(Long cardId) {
@@ -101,14 +105,14 @@ public class BankCardService {
         card.setStatus(BankCardStatus.BLOCKED);
         card.setBlockRequested(false);
         bankCardRepository.save(card);
-    } // ADMIN
+    }
 
     @Transactional
     public void activateCard(Long cardId) {
         BankCard card = checkPresenceAndReturn(cardId);
         card.setStatus(BankCardStatus.ACTIVE);
         bankCardRepository.save(card);
-    } // ADMIN
+    }
 
     @Transactional
     public void sendBlockRequest(Long cardId) {
@@ -140,11 +144,11 @@ public class BankCardService {
         }
 
         if (sourceCard.getStatus() != BankCardStatus.ACTIVE) {
-            throw BankCardNotFoundException.byId(sourceCardId);
+            throw BankCardNotActiveException.byId(sourceCardId);
         }
 
         if (targetCard.getStatus() != BankCardStatus.ACTIVE) {
-            throw BankCardNotFoundException.byId(targetCardId);
+            throw BankCardNotActiveException.byId(targetCardId);
         }
 
         sourceCard.setBalance(sourceCard.getBalance().subtract(amount));
