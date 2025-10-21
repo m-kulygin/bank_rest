@@ -1,10 +1,13 @@
 package com.example.bankcards.dto.response;
 
 import com.example.bankcards.entity.BankCard;
+import com.example.bankcards.entity.enums.BankCardStatus;
+import com.example.bankcards.util.CardNumberMasker;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -12,14 +15,14 @@ public class BankCardForUserDto {
     private Long id;
     private String maskedNumber;
     private BigDecimal balance;
+    private BankCardStatus status;
+    private OffsetDateTime expirationDate;
 
     public BankCardForUserDto(BankCard card) {
         this.id = card.getCardId();
-        this.maskedNumber = maskCardNumber(card.getNumber());
+        this.maskedNumber = CardNumberMasker.maskCardNumber(card.getNumber());
         this.balance = card.getBalance();
-    }
-
-    private String maskCardNumber(String fullNumber) {
-        return "**** **** **** " + fullNumber.substring(fullNumber.length() - 4);
+        this.status = card.getStatus();
+        this.expirationDate = card.getExpirationDate();
     }
 }

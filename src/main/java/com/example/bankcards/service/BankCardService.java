@@ -6,6 +6,7 @@ import com.example.bankcards.dto.request.BankCardSearchCriteria;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.BankUser;
 import com.example.bankcards.entity.enums.BankCardStatus;
+import com.example.bankcards.exception.general.BankCardNotActiveException;
 import com.example.bankcards.exception.general.BankCardNotFoundException;
 import com.example.bankcards.exception.money_transfer.TransferDiffOwnersException;
 import com.example.bankcards.exception.money_transfer.TransferNegativeAmountException;
@@ -143,11 +144,11 @@ public class BankCardService {
         }
 
         if (sourceCard.getStatus() != BankCardStatus.ACTIVE) {
-            throw BankCardNotFoundException.byId(sourceCardId);
+            throw BankCardNotActiveException.byId(sourceCardId);
         }
 
         if (targetCard.getStatus() != BankCardStatus.ACTIVE) {
-            throw BankCardNotFoundException.byId(targetCardId);
+            throw BankCardNotActiveException.byId(targetCardId);
         }
 
         sourceCard.setBalance(sourceCard.getBalance().subtract(amount));

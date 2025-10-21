@@ -26,8 +26,8 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(BankUserRole.USER)
-                .firstName("First") // !!!!!!!!!
-                .lastName("Last") // !!!!!!!!!
+                .firstName(request.getUsername())
+                .lastName(request.getUsername())
                 .build();
 
         userService.create(user);

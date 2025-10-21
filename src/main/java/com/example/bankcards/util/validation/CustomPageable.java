@@ -1,5 +1,6 @@
 package com.example.bankcards.util.validation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
@@ -17,7 +18,9 @@ public class CustomPageable {
     @Max(100)
     private int size;
 
+    @Schema(hidden = true)
     private String sortBy;
+    @Schema(hidden = true)
     private String direction;
 
     public Pageable toPageable() {

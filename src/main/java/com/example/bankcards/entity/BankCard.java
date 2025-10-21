@@ -53,5 +53,4 @@ public class BankCard {
         this.status = status;
         this.balance = balance;
     }
-
 }
