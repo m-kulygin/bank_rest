@@ -111,6 +111,4 @@ public class CustomExceptionHandler {
     public ApiError handleBankUserNotFoundException(BankUserNotFoundException e) {
         return new ApiError(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
-
-
 }

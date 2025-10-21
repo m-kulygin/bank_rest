@@ -27,5 +27,4 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Str
             valueList.add(enumVal.toString().toUpperCase());
         }
     }
-
 }

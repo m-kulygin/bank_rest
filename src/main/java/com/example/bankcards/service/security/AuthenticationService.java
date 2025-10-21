@@ -25,7 +25,7 @@ public class AuthenticationService {
         var user = BankUser.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(BankUserRole.USER) // !!!!!!!!!!!!!!!1
+                .role(BankUserRole.USER)
                 .firstName("First") // !!!!!!!!!
                 .lastName("Last") // !!!!!!!!!
                 .build();

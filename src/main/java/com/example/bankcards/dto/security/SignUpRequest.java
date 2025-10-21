@@ -19,3 +19,4 @@ public class SignUpRequest {
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 }
+

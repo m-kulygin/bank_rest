@@ -25,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class BankCardService {
@@ -87,13 +90,13 @@ public class BankCardService {
                 BankCardStatus.ACTIVE,
                 new BigDecimal(1000));
         return DtoConverter.convertBankCardToDto(bankCardRepository.save(card));
-    } // ADMIN
+    }
 
     @Transactional
     public void deleteCard(Long cardId) {
         checkPresenceAndReturn(cardId);
         bankCardRepository.deleteById(cardId);
-    } // ADMIN
+    }
 
     @Transactional
     public void blockCard(Long cardId) {
@@ -101,14 +104,14 @@ public class BankCardService {
         card.setStatus(BankCardStatus.BLOCKED);
         card.setBlockRequested(false);
         bankCardRepository.save(card);
-    } // ADMIN
+    }
 
     @Transactional
     public void activateCard(Long cardId) {
         BankCard card = checkPresenceAndReturn(cardId);
         card.setStatus(BankCardStatus.ACTIVE);
         bankCardRepository.save(card);
-    } // ADMIN
+    }
 
     @Transactional
     public void sendBlockRequest(Long cardId) {

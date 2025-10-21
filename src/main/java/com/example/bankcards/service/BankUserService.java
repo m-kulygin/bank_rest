@@ -30,14 +30,14 @@ public class BankUserService {
     }
 
     @Transactional(readOnly = true)
-    public List<BankUserDto> getAll() { // получить всех юзером
+    public List<BankUserDto> getAll() {
         List<BankUser> users = bankUserRepository.findAll();
         return users.stream()
                 .map(DtoConverter::convertBankUserToDto)
                 .toList();
     }
 
-    @Transactional // удалить по ИД
+    @Transactional
     public void deleteUser(Long userId) {
         BankUser user = checkPresenceAndReturn(userId);
         bankUserRepository.delete(user);
